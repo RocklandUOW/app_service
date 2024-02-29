@@ -4,4 +4,4 @@ class Account(BaseModel):
     email: str
     username: str
     password: str
-    posts: list[int]
+    posts: list[str]

@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Path, Query
-from schemas.account_schema import list_serial
+from fastapi import APIRouter
+from schemas.account_schema import account_list_serial, account_pass_prot_list_serial
 from models.account_model import Account
-from typing import Annotated
 from bson import ObjectId
 from config.connection import db
 
@@ -11,21 +10,20 @@ collection = db["account"]
 # get all the accounts as a list
 @router.get("/get_all_accounts")
 def get_all_accounts():
-    accounts = list_serial(collection.find())
-    print (type(collection))
+    accounts = account_pass_prot_list_serial(collection.find())
     return accounts
 
 # get a specific account based on the id
 @router.get("/get_account/{id}")
 def get_account(id: str):
-    account = list_serial(collection.find({"_id": ObjectId(id)}))
+    account = account_pass_prot_list_serial(collection.find({"_id": ObjectId(id)}))
 
     return account
 
 # query account based on username
 @router.get("/search_accounts/")
 def search_account(username:str):
-    accounts = list_serial(collection.find({"username":{"$regex":username}}))
+    accounts = account_pass_prot_list_serial(collection.find({"username":{"$regex":username}}))
     return accounts
 
 # add new account to the database
@@ -36,8 +34,8 @@ def add_account(account: Account):
     return {"message": "Account has been added succesfully"}
 
 # modify an account (for admin maybe idk)
-@router.put("/edit_account/{id}")
-def edit_account(id: str, account: Account):
+@router.put("/modify_account/{id}")
+def modify_account(id: str, account: Account):
     collection.find_one_and_update(
         {
             "_id": ObjectId(id)
@@ -49,14 +47,57 @@ def edit_account(id: str, account: Account):
 
     return {"message": "Account has been edited succesfully"}
 
-# delete an account (can be both for admin and user if they want to delete their account)
-@router.delete("/delete_account/{id}")
-def delete_account(id: str):
-    collection.find_one_and_delete({"_id": ObjectId(id)})
+# edit account email
+@router.put("/edit_account_email/{id}")
+def edit_account_email(id: str, email: str):
+    account = collection.find_one({"_id": ObjectId(id)})
+    account["email"] = email
+    collection.find_one_and_update(
+        {
+            "_id": ObjectId(id)
+        },
+        {   
+            "$set": dict(account)
+        }
+    )
+
+    return {"message": "account email has been changed"}
+
+# edit account username
+@router.put("/edit_account_username/{id}")
+def edit_account_username(id: str, username: str):
+    account = collection.find_one({"_id": ObjectId(id)})
+    account["username"] = username
+    collection.find_one_and_update(
+        {
+            "_id": ObjectId(id)
+        },
+        {   
+            "$set": dict(account)
+        }
+    )
+
+    return {"message": "account username has been changed"}
+
+# edit account password
+@router.put("/edit_account_password/{id}")
+def edit_account_password(id: str, password: str):
+    account = collection.find_one({"_id": ObjectId(id)})
+    account["password"] = password
+    collection.find_one_and_update(
+        {
+            "_id": ObjectId(id)
+        },
+        {   
+            "$set": dict(account)
+        }
+    )
+
+    return {"message": "account password has been changed"}
 
 # add new post to a specific account
-@router.put("/add_post/{id}")
-def add_post_to_account(id: str, posts: list[int]):
+@router.put("/add_post_to_account/{id}")
+def add_post_to_account(id: str, posts: list[str]):
     account = collection.find_one({"_id": ObjectId(id)})
     original_posts = account.get('posts')
     for post in posts:
@@ -74,8 +115,8 @@ def add_post_to_account(id: str, posts: list[int]):
     return {"message": "post(s) has been added to the account succesfully"}
 
 # remove a post from a specific account
-@router.put("/remove_post/{id}")
-def remove_post_from_account(id: str, posts: list[int]):
+@router.put("/remove_post_from_account/{id}")
+def remove_post_from_account(id: str, posts: list[str]):
     account = collection.find_one({"_id": ObjectId(id)})
     original_posts = account.get('posts')
     for post in posts:
@@ -94,3 +135,24 @@ def remove_post_from_account(id: str, posts: list[int]):
     )
 
     return {"message": "post(s) has been removed from the account succesfully"}
+
+# modify the post of an account
+@router.put("/modify_account_posts/{id}")
+def modify_account_posts(id: str, posts: list[str]):
+    account = collection.find_one({"_id": ObjectId(id)})
+    account["posts"] = posts
+    collection.find_one_and_update(
+        {
+            "_id": ObjectId(id)
+        },
+        {   
+            "$set": dict(account)
+        }
+    )
+
+    return {"message": "account posts has been modified"}
+
+# delete an account (can be both for admin and user if they want to delete their account)
+@router.delete("/delete_account/{id}")
+def delete_account(id: str):
+    collection.find_one_and_delete({"_id": ObjectId(id)})
