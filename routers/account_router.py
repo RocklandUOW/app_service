@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Path, Query
-from schemas.account_schema import list_serial
+from schemas.account_schema import list_serial, pass_prot_list_serial
 from models.account_model import Account
 from typing import Annotated
 from bson import ObjectId
@@ -11,21 +11,20 @@ collection = db["account"]
 # get all the accounts as a list
 @router.get("/get_all_accounts")
 def get_all_accounts():
-    accounts = list_serial(collection.find())
-    print (type(collection))
+    accounts = pass_prot_list_serial(collection.find())
     return accounts
 
 # get a specific account based on the id
 @router.get("/get_account/{id}")
 def get_account(id: str):
-    account = list_serial(collection.find({"_id": ObjectId(id)}))
+    account = pass_prot_list_serial(collection.find({"_id": ObjectId(id)}))
 
     return account
 
 # query account based on username
 @router.get("/search_accounts/")
 def search_account(username:str):
-    accounts = list_serial(collection.find({"username":{"$regex":username}}))
+    accounts = pass_prot_list_serial(collection.find({"username":{"$regex":username}}))
     return accounts
 
 # add new account to the database
