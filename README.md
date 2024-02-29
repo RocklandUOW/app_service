@@ -29,3 +29,7 @@
 ## Pushing instructions
 * Please create a new branch to avoid clutters in the main development branch
 * before pushing dont forget to remove the tracking of the .env file so that if somebody has different configs it would not interfere with their work
+```
+    # use this command before pushing to remove the tracking on .env
+    > git rm .env --cached
+```
