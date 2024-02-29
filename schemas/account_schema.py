@@ -2,6 +2,7 @@
 
 def individual_serial(account) -> dict:
     return {
+        "_id": str(account["_id"]),
         "email": (account["email"]),
         "username": (account["username"]),
         "password":(account["password"]),
@@ -10,6 +11,7 @@ def individual_serial(account) -> dict:
 
 def password_protected(account) -> dict:
     return {
+        "_id": str(account["_id"]),
         "email": (account["email"]),
         "username": (account["username"]),
         "password": "*********",
@@ -17,8 +19,8 @@ def password_protected(account) -> dict:
     }
 
 
-def list_serial(accounts) -> list:
+def account_list_serial(accounts) -> list:
     return[individual_serial(account) for account in accounts]
 
-def pass_prot_list_serial(accounts) -> list:
+def account_pass_prot_list_serial(accounts) -> list:
     return[password_protected(account) for account in accounts]
