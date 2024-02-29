@@ -24,6 +24,9 @@
 
     # open the docs to test api calls
     > click the link presented in the console
+
+    # append /docs to the url
+    > test individual methods that you created on that webpage
 ```
 
 ## Pushing instructions
