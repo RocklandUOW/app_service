@@ -1,5 +1,9 @@
 # How to run
 
+## Mongodb setup
+* You can run the database locally or using a cluster
+* The configurations is controlled in the subfolder config/connections.py
+
 ## Attention
 * Before running anything, please change the .env to suit your database setup
 * After the .env file is appropriately changed, cd to the main directory of the repository, then:
