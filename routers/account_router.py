@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from schemas.account_schema import account_list_serial, account_pass_prot_list_serial
 from models.account_model import Account
+from models.model_schemas import PassCheck
 from bson import ObjectId
 from config.connection import db
 
@@ -25,6 +26,16 @@ def get_account(id: str):
 def search_account(username:str):
     accounts = account_pass_prot_list_serial(collection.find({"username":{"$regex":username}}))
     return accounts
+
+# check for password for given account
+@router.post("/check_password/")
+def search_account(form: PassCheck):
+    form = dict(form)
+    account = collection.find_one({"username":form.get("username")})
+    if (account.get("password") == form.get("password")):
+        return {"message": "match"}
+    else:
+        return {"message": "hacker"}
 
 # add new account to the database
 @router.post("/add_account")
