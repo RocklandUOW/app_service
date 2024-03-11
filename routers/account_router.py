@@ -32,7 +32,13 @@ def search_account(username:str):
 def search_account(form: PassCheck):
     form = dict(form)
     account = collection.find_one({"username":form.get("username")})
-    if (account.get("password") == form.get("password")):
+    
+    try:
+        checkValue = (account.get("password") == form.get("password"))
+    except:
+        return {"message": "account not found"}
+
+    if (checkValue):
         return {"message": "match"}
     else:
         return {"message": "hacker"}
